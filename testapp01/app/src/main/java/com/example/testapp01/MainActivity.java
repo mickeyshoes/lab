@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     con.setDoOutput(true);
 
                     int reqcode = con.getResponseCode();
+                    Log.d("인터넷 연결은 되신겁니까?", String.valueOf(reqcode));
 
                     InputStreamReader isr = new InputStreamReader(con.getInputStream());
                     BufferedReader reader = new BufferedReader(isr);
