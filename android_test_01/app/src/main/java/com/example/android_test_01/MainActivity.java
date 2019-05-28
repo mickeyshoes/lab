@@ -11,8 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
@@ -21,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     TextView txtmsg01;
     private String seturl = "http://10.0.2.2:8000/print/print_hello";
     Handler handler = new Handler();
+    Async_test at;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        Button button1 = (Button)findViewById(R.id.Astnc_start);
+        Button button1 = (Button)findViewById(R.id.reset_start);
         button1.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -47,6 +52,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button3 = (Button)findViewById(R.id.Astnc_start);
+        button3.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                at = new Async_test();
+                at.execute(seturl);
+
+            }
+        });
+
+        Button button4 = (Button)findViewById(R.id.json_start);
+        button4.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this,"종료됩니다.", Toast.LENGTH_SHORT).show();
+        at.cancel(true); // 스레드 종료
+        super.onBackPressed();
     }
 
     class ConnectThread extends Thread{
@@ -117,6 +149,64 @@ public class MainActivity extends AppCompatActivity {
             return output.toString();
         }
 
+    }
+
+
+    // <시작파라미터, 진행상태, 서버로 받은 데이터를 리턴할때 사용하는 타입>
+    class Async_test extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... parameters) {
+            Log.e("입력한 url이 이쪽으로 넘어오는가 확인",parameters[0]+"가 출력되었다.");
+            StringBuilder output = new StringBuilder();
+
+            try {
+                URL url = new URL(parameters[0]);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+                if(con!=null){
+                    con.setConnectTimeout(10000);
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Accept-Charset", "UTF-8");
+                    con.setDoInput(true);
+                    con.setDoOutput(true);
+
+                    int reqcode = con.getResponseCode();
+                    Log.e("internet","인터넷 연결이 되었는지 확인");
+
+                    InputStreamReader isr = new InputStreamReader(con.getInputStream());
+                    BufferedReader reader = new BufferedReader(isr);
+                    String line = null;
+
+                    while(true){
+                        line = reader.readLine();
+                        if(line==null){
+                            break;
+                        }
+                        output.append(line+"다읽었음");
+                    }
+
+                    reader.close();
+                    con.disconnect();
+                }
+            } catch (MalformedURLException e) {
+                Log.e("url","url이 잘못되었음. 입력받은 url = "+ parameters[0]);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e("url-connetcion","연결에 실패하였음. 입력받은 url = "+ parameters[0]);
+                e.printStackTrace();
+            }
+
+
+            return output.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            txtmsg01.setText(s);
+        }
     }
 
 
