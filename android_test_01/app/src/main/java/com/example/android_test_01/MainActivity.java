@@ -10,9 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -68,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+                JsonAsyncTask jsontask = new JsonAsyncTask();
+                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
 
             }
         });
@@ -155,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
     // <시작파라미터, 진행상태, 서버로 받은 데이터를 리턴할때 사용하는 타입>
     class Async_test extends AsyncTask<String, Void, String> {
 
-
         @Override
         protected String doInBackground(String... parameters) {
             Log.e("입력한 url이 이쪽으로 넘어오는가 확인",parameters[0]+"가 출력되었다.");
@@ -199,6 +205,61 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
+            return output.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            txtmsg01.setText(s);
+        }
+    }
+
+    class JsonAsyncTask extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            JSONObject jobject = new JSONObject();
+            StringBuilder output = new StringBuilder();
+
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+                String json= "";
+                jobject.accumulate("key","345612");
+                json = jobject.toString();
+
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Accept", "application/json");
+                con.setRequestProperty("Content-type", "application/json");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+
+                OutputStream os = con.getOutputStream();
+                os.write(json.getBytes("euc-kr"));
+                os.flush();
+
+                InputStreamReader is = new InputStreamReader(con.getInputStream());
+                BufferedReader reader = new BufferedReader(is);
+                String results = "";
+
+                while(true){
+                    results = reader.readLine();
+                    if(results == null){
+                        break;
+                    }
+                    output.append(results+"complete");
+                }
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return output.toString();
         }
 
