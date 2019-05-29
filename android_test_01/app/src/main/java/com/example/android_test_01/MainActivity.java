@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JsonAsyncTask jsontask = new JsonAsyncTask();
-                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
+                jsontask.execute("https://httpbin.org/post");
 
             }
         });
@@ -236,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 con.setDoInput(true);
                 con.setDoOutput(true);
 
+                Log.e("what's the problem","코드가 어디까지 실행이 되었는가 확인");
+
                 OutputStream os = con.getOutputStream();
                 os.write(json.getBytes("euc-kr"));
                 os.flush();
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     if(results == null){
                         break;
                     }
-                    output.append(results+"complete");
+                    output.append(results+"\n");
                 }
 
 
