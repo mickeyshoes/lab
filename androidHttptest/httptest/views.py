@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 # Create your views here.
 
@@ -11,6 +12,15 @@ def print_hello(request):
 
 @csrf_exempt
 def accept_hello(request):
-    print_change = request.POST.get('print','')
-    print_json = print_change + "ack"
-    return HttpResponse(print_json)
+    if(request.method=='POST'):
+        received_json_data = json.loads(request.body)
+        """print(received_json_data)
+        print(type(received_json_data))"""
+        for key in received_json_data:
+            print(key)
+            received_json_data[key]= received_json_data[key]+5
+        print(received_json_data)
+        return HttpResponse(received_json_data)
+    else:
+        return HttpResponse("json type data received fail") 
+       

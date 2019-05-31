@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JsonAsyncTask jsontask = new JsonAsyncTask();
-                jsontask.execute("https://httpbin.org/post");
+                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
 
             }
         });
@@ -224,10 +224,11 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(params[0]);
+                Log.e("코드가 어디까지 실행되었는고?",params[0]);
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
 
                 String json= "";
-                jobject.accumulate("key","345612");
+                jobject.accumulate("key",346512);
                 json = jobject.toString();
 
                 con.setRequestMethod("POST");
