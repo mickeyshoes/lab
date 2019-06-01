@@ -26,7 +26,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     TextView txtmsg01;
-    private String seturl = "http://10.0.2.2:8000/print/print_hello";
+    private String seturl = "http://192.168.0.15:8881/server_time/pick_time";
     Handler handler = new Handler();
     Async_test at;
 
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JsonAsyncTask jsontask = new JsonAsyncTask();
-                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
+                jsontask.execute("http://192.168.0.15:8881/dbtest/test_connect");
 
             }
         });
