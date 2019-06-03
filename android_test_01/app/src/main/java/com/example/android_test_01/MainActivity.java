@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
 
     TextView txtmsg01;
-    private String seturl = "http://192.168.0.15:8881/server_time/pick_time";
+    private String seturl = "http://10.0.2.2:8000/print/print_hello";
     Handler handler = new Handler();
     Async_test at;
 
@@ -86,13 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Jsontest js = new Jsontest();
-                try {
-                    txtmsg01.setText(js.execute().get());
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                js.execute("http://10.0.2.2:8000/print/catch_json");
 
             }
         });

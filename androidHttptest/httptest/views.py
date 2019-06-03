@@ -24,3 +24,14 @@ def accept_hello(request):
     else:
         return HttpResponse("json type data received fail") 
        
+@csrf_exempt
+def catch_json(request):
+    if request.method == 'POST':
+        received_json_data = json.loads(request.body)
+        for key in received_json_data:
+            print(key)
+        print(received_json_data)
+        return HttpResponse(received_json_data)
+
+    else:
+        return HttpResponse("json type data received fail")
