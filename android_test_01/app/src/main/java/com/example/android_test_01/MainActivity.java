@@ -22,6 +22,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,7 +76,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JsonAsyncTask jsontask = new JsonAsyncTask();
-                jsontask.execute("http://192.168.0.15:8881/dbtest/test_connect");
+                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
+
+            }
+        });
+
+        Button button5 = (Button)findViewById(R.id.json_make);
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Jsontest js = new Jsontest();
+                try {
+                    txtmsg01.setText(js.execute().get());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -273,6 +291,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    //https://mainia.tistory.com/5673
 
 }
