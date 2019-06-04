@@ -1,5 +1,6 @@
 package com.example.android_test_01;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,20 +25,23 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.io.DataOutputStream;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView txtmsg01;
-    private String seturl = "http://10.0.2.2:8000/print/print_hello";
+    private String seturl = "http://192.168.0.15:8888/server_time/print_time";
     Handler handler = new Handler();
     Async_test at;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Intent intent = new Intent(this, login_test_act.class);
 
         txtmsg01 = (TextView) findViewById(R.id.textview01);
 
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JsonAsyncTask jsontask = new JsonAsyncTask();
-                jsontask.execute("http://10.0.2.2:8000/print/accept_hello");
+                jsontask.execute("http://192.168.0.15:8888/dbtest/test_connect");
 
             }
         });
@@ -86,7 +91,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Jsontest js = new Jsontest();
-                js.execute("http://10.0.2.2:8000/print/catch_json");
+                js.execute("http://192.168.0.15:8888/dbtest/test_connect");
+
+            }
+        });
+
+        Button button6 = (Button)findViewById(R.id.next_act);
+        button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
 
             }
         });
@@ -240,7 +254,10 @@ public class MainActivity extends AppCompatActivity {
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
 
                 String json= "";
-                jobject.accumulate("key",346512);
+                jobject.accumulate("ID","lemonade");
+                jobject.accumulate("ID","appleade");
+                jobject.accumulate("pw","33578");
+                jobject.accumulate("pw","34666");
                 json = jobject.toString();
 
                 con.setRequestMethod("POST");
@@ -286,5 +303,80 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //https://mainia.tistory.com/5673
+
+    public class Jsontest extends AsyncTask<String, Void, String> {
+
+        public ArrayList<User> userlist = new ArrayList<>();
+
+        @Override
+        protected void onPreExecute() {
+
+            User user1 = new User();
+            user1.ID = "hello";
+            user1.name="park";
+            user1.age = 15;
+
+            User user2 = new User();
+            user2.ID = "hi";
+            user2.name="kim";
+            user2.age=17;
+
+            userlist.add(user1);
+            userlist.add(user2);
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            JSONArray jarray = new JSONArray();
+            for(int i=0; i< userlist.size(); i++){
+                JSONObject sobj = new JSONObject();
+                try {
+                    sobj.put("ID", userlist.get(i).ID);
+                    sobj.put("name", userlist.get(i).name);
+                    sobj.put("age", userlist.get(i).age);
+                    jarray.put(sobj);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            try {
+                String sendJson = jarray.toString();
+
+                URL url = new URL(params[0]);
+                Log.e("출력 url",params[0]);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Accept", "application/json");
+                con.setRequestProperty("Content-type", "application/json");
+                con.setDoInput(true);
+                con.setDoOutput(true);
+
+                OutputStream os = con.getOutputStream();
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+
+                wr.writeBytes("0");
+                os.write(sendJson.getBytes("euc-kr"));
+                os.flush();
+                Log.e("출력 url",params[0]);
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally{
+                Log.d("input test", jarray.toString());
+            }
+
+
+            return jarray.toString();
+        }
+    }
+
+
 
 }

@@ -14,7 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class Jsontest extends AsyncTask<String, Void, String> {
+public class Jsontest1 extends AsyncTask<String, Void, String> {
 
     public ArrayList<User> userlist = new ArrayList<>();
 
@@ -47,34 +47,38 @@ public class Jsontest extends AsyncTask<String, Void, String> {
                 sobj.put("name", userlist.get(i).name);
                 sobj.put("age", userlist.get(i).age);
                 jarray.put(sobj);
-                String sendJson = jarray.toString();
-
-                URL url = new URL(params[0]);
-                Log.e("출력 url",params[0]);
-                HttpURLConnection con = (HttpURLConnection)url.openConnection();
-
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Accept", "application/json");
-                con.setRequestProperty("Content-type", "application/json");
-                con.setDoInput(true);
-                con.setDoOutput(true);
-
-                OutputStream os = con.getOutputStream();
-                os.write(sendJson.getBytes("euc-kr"));
-                os.flush();
-                Log.e("출력 url",params[0]);
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally{
-                Log.d("input test", jarray.toString());
             }
+
         }
+        try {
+            String sendJson = jarray.toString();
+
+            URL url = new URL(params[0]);
+            Log.e("출력 url",params[0]);
+            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Content-type", "application/json");
+            con.setDoInput(true);
+            con.setDoOutput(true);
+
+            OutputStream os = con.getOutputStream();
+            os.write(sendJson.getBytes("euc-kr"));
+            os.flush();
+            Log.e("출력 url",params[0]);
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally{
+            Log.d("input test", jarray.toString());
+        }
+
 
         return jarray.toString();
     }
